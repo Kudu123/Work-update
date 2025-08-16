@@ -174,11 +174,26 @@ function loadPaymentHistory() {
         return;
     }
 
-    history.forEach(archive => {
+    history.forEach((archive, index) => {
         const detailsElement = document.createElement('details');
         detailsElement.className = 'payment-history-item';
         const summaryElement = document.createElement('summary');
-        summaryElement.textContent = archive.date;
+        
+        const summaryText = document.createElement('span');
+        summaryText.textContent = archive.date;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn-delete-history';
+        deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        const originalIndex = history.length - 1 - index;
+        deleteBtn.onclick = (e) => {
+            e.preventDefault();
+            deletePaymentHistory(originalIndex);
+        };
+
+        summaryElement.appendChild(summaryText);
+        summaryElement.appendChild(deleteBtn);
+        
         const ul = document.createElement('ul');
         ul.className = 'payment-history-details';
 
@@ -205,6 +220,17 @@ function loadPaymentHistory() {
         detailsElement.appendChild(ul);
         container.appendChild(detailsElement);
     });
+}
+
+function deletePaymentHistory(index) {
+    if (!confirm('Are you sure you want to permanently delete this history entry?')) {
+        return;
+    }
+
+    let history = getPaymentHistory();
+    history.splice(index, 1);
+    savePaymentHistory(history);
+    loadPaymentHistory();
 }
 
 
@@ -262,7 +288,6 @@ function renderWorkChart(works, paymentHistory, currentPayments) {
     const ctx = document.getElementById('workChart').getContext('2d');
     const monthlyData = {};
 
-    // 1. Process earnings from 'works'
     const paidWorks = works.filter(work => work.status === 'paid' && work.paidDate);
     paidWorks.forEach(work => {
         const dateToUse = new Date(work.paidDate);
@@ -273,12 +298,10 @@ function renderWorkChart(works, paymentHistory, currentPayments) {
         monthlyData[month] += parseFloat(work.amount);
     });
     
-    // 2. Combine current and historical payments for the chart
     const now = new Date();
     const currentMonthYear = `${now.toLocaleString('default', { month: 'long' })} ${now.getFullYear()}`;
     const allPayments = [...paymentHistory, { date: currentMonthYear, data: currentPayments }];
 
-    // 3. Process earnings from all payments
     allPayments.forEach(archive => {
         const month = archive.date;
         archive.data.forEach(payer => {
@@ -291,7 +314,6 @@ function renderWorkChart(works, paymentHistory, currentPayments) {
         });
     });
 
-    // Sort months chronologically
     const sortedMonths = Object.keys(monthlyData).sort((a, b) => new Date(a) - new Date(b));
     const labels = sortedMonths;
     const data = sortedMonths.map(month => monthlyData[month]);
@@ -301,7 +323,6 @@ function renderWorkChart(works, paymentHistory, currentPayments) {
         existingChart.destroy();
     }
     
-    // Register the datalabels plugin
     Chart.register(ChartDataLabels);
 
     new Chart(ctx, {
@@ -327,7 +348,7 @@ function renderWorkChart(works, paymentHistory, currentPayments) {
             },
             plugins: {
                 legend: {
-                    display: false // Hiding legend as label is clear
+                    display: false
                 },
                 tooltip: {
                     enabled: true
