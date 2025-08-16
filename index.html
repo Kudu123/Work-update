@@ -6,93 +6,103 @@
     <title>Dashboard - Work Tracker</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
     
+    <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
+    <!-- Chart.js Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
+    <nav class="sidebar" id="sidebar-menu">
+        <div class="sidebar-header">
             <a href="index.html" class="nav-logo">WorkTracker</a>
-            <ul class="nav-menu">
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link">Work ▾</a>
-                    <div class="dropdown-content">
-                        <a href="work-update.html">Add New Work</a>
-                        <a href="work-list.html">Work List</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link">Notes ▾</a>
-                    <div class="dropdown-content">
-                        <a href="add-note.html">Add Note</a>
-                        <a href="notes.html">View Notes</a>
-                    </div>
-                </li>
-            </ul>
         </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html" class="nav-link">Dashboard</a></li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Work ▾</a>
+                <div class="dropdown-content">
+                    <a href="work-update.html">Add New Work</a>
+                    <a href="work-list.html">Work List</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Notes ▾</a>
+                <div class="dropdown-content">
+                    <a href="add-note.html">Add Note</a>
+                    <a href="notes.html">View Notes</a>
+                </div>
+            </li>
+            <li class="nav-item"><a href="payments.html" class="nav-link">Monthly Payments</a></li>
+        </ul>
     </nav>
 
-    <div class="main-container">
-        <header class="dashboard-header">
-            <h1>Dashboard</h1>
-            <p>Welcome back! Here's your work summary for today, August 16, 2025.</p>
-        </header>
+    <button class="hamburger" id="hamburger-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
 
-        <div class="quick-actions">
-            <a href="work-update.html" class="action-btn primary">
-                <i class="fas fa-plus-circle"></i>
-                <span>Add New Work</span>
-            </a>
-            <a href="add-note.html" class="action-btn secondary">
-                <i class="fas fa-file-alt"></i>
-                <span>Create a Note</span>
-            </a>
-        </div>
+    <div class="content-overlay" id="content-overlay"></div>
 
-        <div class="grid-container">
-            <div class="card">
-                <h2><i class="fas fa-briefcase"></i> Work Summary</h2>
-                <div class="summary-item">
-                    <div class="summary-icon icon-paid">
-                        <i class="fas fa-indian-rupee-sign"></i>
+    <div class="main-content">
+        <div class="main-container">
+            <header class="page-header">
+                <h1><i class="fas fa-home"></i> Dashboard</h1>
+                <p>Welcome back! Here's your work summary.</p>
+            </header>
+
+            <div class="quick-actions">
+                <a href="work-update.html" class="action-btn primary"><i class="fas fa-plus-circle"></i><span>Add New Work</span></a>
+                <a href="add-note.html" class="action-btn secondary"><i class="fas fa-file-alt"></i><span>Create a Note</span></a>
+                <a href="payments.html" class="action-btn payments"><i class="fas fa-credit-card"></i><span>Add Payments</span></a>
+            </div>
+
+            <div class="grid-container">
+                <div class="card">
+                    <h2><i class="fas fa-briefcase"></i> Work Summary</h2>
+                    <div class="summary-item">
+                        <div class="summary-icon icon-paid"><i class="fas fa-indian-rupee-sign"></i></div>
+                        <div class="summary-text">
+                            <span class="summary-label">Total Paid Amount</span>
+                            <span class="summary-value" id="total-amount">₹0.00</span>
+                        </div>
                     </div>
-                    <div class="summary-text">
-                        <span class="summary-label">Total Paid Amount</span>
-                        <span class="summary-value" id="total-amount">₹0.00</span>
+                    <div class="summary-item">
+                        <div class="summary-icon icon-upcoming"><i class="fas fa-calendar-days"></i></div>
+                        <div class="summary-text">
+                            <span class="summary-label">Upcoming Work</span>
+                            <ul class="upcoming-list" id="upcoming-work-list">
+                                <li>No upcoming work scheduled.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <div class="summary-item">
-                    <div class="summary-icon icon-upcoming">
-                        <i class="fas fa-calendar-days"></i>
-                    </div>
-                    <div class="summary-text">
-                        <span class="summary-label">Upcoming Work</span>
-                        <ul class="upcoming-list" id="upcoming-work-list">
-                            <li>No upcoming work scheduled.</li>
-                        </ul>
+
+                <div class="card">
+                    <h2><i class="fas fa-users"></i> Monthly Payments</h2>
+                    <ul class="payment-summary-list" id="monthly-payments-summary">
+                        <!-- Payment summary will be inserted here -->
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2><i class="fas fa-sticky-note"></i> Newest Notes</h2>
+                    <div id="notes-summary">
+                        <div class="summary-item-note"><p>No notes found.</p></div>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
-                <h2><i class="fas fa-sticky-note"></i> Newest Notes</h2>
-                <div id="notes-summary">
-                    <div class="summary-item-note">
-                        <p>No notes found.</p>
-                    </div>
-                </div>
+            <div class="card chart-container">
+                 <h2><i class="fas fa-chart-line"></i> Monthly Earnings (Paid)</h2>
+                 <canvas id="workChart"></canvas>
             </div>
-        </div>
-
-        <div class="card chart-container">
-             <h2><i class="fas fa-chart-line"></i> Monthly Earnings (Paid)</h2>
-             <canvas id="workChart"></canvas>
         </div>
     </div>
     
