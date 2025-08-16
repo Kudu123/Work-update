@@ -8,10 +8,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar">
-    <div class="nav-container">
-        <a href="index.html" class="nav-logo">WorkTracker</a>
+<nav class="sidebar" id="sidebar-menu">
+        <div class="sidebar-header">
+            <a href="index.html" class="nav-logo">WorkTracker</a>
+        </div>
         <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html" class="nav-link">Dashboard</a></li>
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link">Work ▾</a>
                 <div class="dropdown-content">
@@ -26,9 +28,10 @@
                     <a href="notes.html">View Notes</a>
                 </div>
             </li>
+            <li class="nav-item"><a href="payments.html" class="nav-link">Monthly Payments</a></li>
         </ul>
-    </div>
-</nav>
+    </nav>
+
 
     <div class="main-container">
         <h1>Add/Update Work</h1>
@@ -83,3 +86,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
