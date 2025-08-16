@@ -14,60 +14,73 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
+    <nav class="sidebar" id="sidebar-menu">
+        <div class="sidebar-header">
             <a href="index.html" class="nav-logo">WorkTracker</a>
-            <ul class="nav-menu">
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link">Work ▾</a>
-                    <div class="dropdown-content">
-                        <a href="work-update.html">Add New Work</a>
-                        <a href="work-list.html">Work List</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link">Notes ▾</a>
-                    <div class="dropdown-content">
-                        <a href="add-note.html">Add Note</a>
-                        <a href="notes.html">View Notes</a>
-                    </div>
-                </li>
-            </ul>
         </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html" class="nav-link">Dashboard</a></li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Work ▾</a>
+                <div class="dropdown-content">
+                    <a href="work-update.html">Add New Work</a>
+                    <a href="work-list.html">Work List</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Notes ▾</a>
+                <div class="dropdown-content">
+                    <a href="add-note.html">Add Note</a>
+                    <a href="notes.html">View Notes</a>
+                </div>
+            </li>
+            <li class="nav-item"><a href="payments.html" class="nav-link">Monthly Payments</a></li>
+        </ul>
     </nav>
 
-    <div class="main-container">
-        <header class="page-header">
-            <h1><i class="fas fa-list-alt"></i> Work List</h1>
-        </header>
+    <button class="hamburger" id="hamburger-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
 
-        <div class="card" id="work-list-section">
-            <div class="action-bar">
-                <button id="download-pdf" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> Download Report</button>
-                <button id="delete-selected-btn" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete Selected</button>
-            </div>
-            <div class="table-container">
-                <table id="work-table">
-                    <thead>
-                        <tr>
-                            <th><input type="checkbox" id="select-all-checkbox"></th>
-                            <th>Work Date</th>
-                            <th>Type</th>
-                           
-                            <th>Amount</th>
-                            <th>Location</th>
-                            <th>No. of Employees</th>
-                            <th>Employee Names</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th>Paid On</th>
-                            <th>Entry Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="work-list-body">
-                        </tbody>
-                </table>
+    <div class="content-overlay" id="content-overlay"></div>
+
+    <div class="main-content">
+        <div class="main-container">
+            <header class="page-header">
+                <!-- UPDATED HEADER -->
+                <h1><i class="fas fa-list-alt"></i> Work List <span id="work-list-count" class="row-count"></span></h1>
+            </header>
+
+            <div class="card" id="work-list-section">
+                <div class="action-bar">
+                    <button id="download-pdf" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> Download Report</button>
+                    <button id="delete-selected-btn" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete Selected</button>
+                </div>
+                <div class="table-container">
+                    <table id="work-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all-checkbox"></th>
+                                <th>Work Date</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Expenses</th>
+                                <th>Location</th>
+                                <th>KM</th>
+                                <th>No. of Employees</th>
+                                <th>Employee Names</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Paid On</th>
+                                <th>Entry Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="work-list-body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
