@@ -52,7 +52,7 @@ function loadHomePageData() {
     if (upcomingWorks.length > 0) {
         upcomingWorks.forEach(work => {
             const li = document.createElement('li');
-            li.textContent = `${work.date}: ${work.type}`;
+            li.textContent = `${work.date}:${work.location}:${work.type}`;
             upcomingWorkList.appendChild(li);
         });
     } else {
