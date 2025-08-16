@@ -15,7 +15,120 @@
         <ul class="nav-menu">
             <li class="nav-item"><a href="index.html" class="nav-link">Dashboard</a></li>
             <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Work ▾</a><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Update - Work Tracker</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar-menu">
+        <div class="sidebar-header">
+            <a href="index.html" class="nav-logo">WorkTracker</a>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html" class="nav-link">Dashboard</a></li>
+            <li class="nav-item dropdown">
                 <a href="#" class="nav-link">Work ▾</a>
+                <div class="dropdown-content">
+                    <a href="work-update.html">Add New Work</a>
+                    <a href="work-list.html">Work List</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Notes ▾</a>
+                <div class="dropdown-content">
+                    <a href="add-note.html">Add Note</a>
+                    <a href="notes.html">View Notes</a>
+                </div>
+            </li>
+            <li class="nav-item"><a href="payments.html" class="nav-link">Monthly Payments</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hamburger Button for Mobile -->
+    <button class="hamburger" id="hamburger-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
+
+    <!-- Overlay for Mobile Menu -->
+    <div class="content-overlay" id="content-overlay"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-content">
+        <div class="main-container">
+            <header class="page-header">
+                <h1><i class="fas fa-plus-circle"></i> Add / Update Work</h1>
+            </header>
+            <div class="card">
+                <form id="work-form">
+                    <input type="hidden" id="work-id">
+                    <div class="form-group">
+                        <label for="work-date">Work Date:</label>
+                        <input type="date" id="work-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="work-type">Work Type:</label>
+                        <input type="text" id="work-type" placeholder= required>
+                    </div>
+                    <div class="form-group">
+                        <label for="num-employees">Number of Employees:</label>
+                        <input type="number" id="num-employees" placeholder= required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rate-per-employee">Rate per Employee (₹):</label>
+                        <input type="number" id="rate-per-employee" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="total-amount">Calculated Total Amount (₹):</label>
+                        <input type="text" id="total-amount" readonly style="background-color: #e9ecef; font-weight: bold;">
+                    </div>
+                    <div class="form-group">
+                        <label for="expenses">Expenses (₹):</label>
+                        <input type="number" id="expenses" placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-names">Employee Names:</label>
+                        <textarea id="employee-names" rows="2" placeholder=""></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location:</label>
+                        <input type="text" id="location" placeholder="" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" rows="3" placeholder=""></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Status:</label>
+                        <div class="radio-group">
+                            <input type="radio" id="paid" name="status" value="paid"> <label for="paid">Paid</label>
+                            <input type="radio" id="unpaid" name="status" value="unpaid" checked> <label for="unpaid">Unpaid</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Save Work</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
                 <div class="dropdown-content">
                     <a href="work-update.html">Add New Work</a>
                     <a href="work-list.html">Work List</a>
@@ -86,4 +199,5 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
