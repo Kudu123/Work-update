@@ -62,12 +62,12 @@ const saveNotes = (notes) => localStorage.setItem('notes', JSON.stringify(notes)
 
 // --- MONTHLY PAYMENTS LOGIC ---
 const initialPayers = [
-    { name: 'SWAMINATH', amount: 60 },
-    { name: 'RYAN', amount: 60 },
-    { name: 'FAHEEM', amount: 60 },
-    { name: 'NIKHIL', amount: 60 },
-    { name: 'EDWIN', amount: 60 },
-    { name: 'AMARJITH', amount: 60 }
+    { name: 'Swaminath', amount: 500 },
+    { name: 'Ryan', amount: 500 },
+    { name: 'Daheem', amount: 500 },
+    { name: 'Nikhil', amount: 500 },
+    { name: 'Edwin', amount: 500 },
+    { name: 'Amarjith', amount: 500 }
 ];
 
 const getPayers = () => JSON.parse(localStorage.getItem('payers')) || initialPayers;
@@ -391,10 +391,8 @@ function setupWorkForm() {
         document.getElementById('work-type').value = workToEdit.type;
         document.getElementById('num-employees').value = workToEdit.numEmployees;
         document.getElementById('rate-per-employee').value = workToEdit.ratePerEmployee;
-        document.getElementById('expenses').value = workToEdit.expenses;
         document.getElementById('employee-names').value = workToEdit.employeeNames;
         document.getElementById('location').value = workToEdit.location;
-        document.getElementById('km-traveled').value = workToEdit.km;
         document.getElementById('description').value = workToEdit.description;
         document.querySelector(`input[name="status"][value="${workToEdit.status}"]`).checked = true;
         calculateTotal();
@@ -415,10 +413,8 @@ function handleWorkFormSubmit(e) {
         numEmployees: num,
         ratePerEmployee: rate,
         amount: (num * rate).toFixed(2),
-        expenses: document.getElementById('expenses').value,
         employeeNames: document.getElementById('employee-names').value,
         location: document.getElementById('location').value,
-        km: document.getElementById('km-traveled').value,
         description: document.getElementById('description').value,
         status: document.querySelector('input[name="status"]:checked').value,
     };
@@ -447,7 +443,7 @@ function loadWorkList() {
     tableBody.innerHTML = '';
     
     if (works.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="14">No work entries found. Add one!</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="12">No work entries found. Add one!</td></tr>';
         return;
     }
     
@@ -460,16 +456,13 @@ function loadWorkList() {
             actionButtons += `<button class="btn btn-paid" onclick="markAsPaid(${work.id})">Mark Paid</button>`;
         }
         const entryDateTime = new Date(work.entryDate).toLocaleString();
-        const expenses = work.expenses ? `₹${parseFloat(work.expenses).toFixed(2)}` : 'N/A';
         
         row.innerHTML = `
             <td><input type="checkbox" class="row-checkbox" value="${work.id}"></td>
             <td>${work.date}</td>
             <td>${work.type}</td>
             <td>₹${parseFloat(work.amount).toFixed(2)}</td>
-            <td>${expenses}</td>
             <td>${work.location}</td>
-            <td>${work.km || 'N/A'}</td>
             <td>${work.numEmployees}</td>
             <td>${work.employeeNames}</td>
             <td>${work.description}</td>
@@ -512,19 +505,16 @@ function downloadWorkReport() {
     doc.text("Work Update Report", 14, 16);
     
     const tableColumn = [
-        "Date", "Type", "Amount", "Expenses", "Location", "KM", "Employees", "Names", "Description", "Status", "Paid On"
+        "Date", "Type", "Amount", "Location", "Employees", "Names", "Description", "Status", "Paid On"
     ];
     const tableRows = [];
     
     works.forEach(work => {
-        const expenses = work.expenses ? `Rs. ${parseFloat(work.expenses).toFixed(2)}` : 'N/A';
         const workData = [
             work.date,
             work.type,
             `Rs. ${work.amount}`,
-            expenses,
             work.location,
-            work.km || 'N/A',
             work.numEmployees,
             work.employeeNames,
             work.description,
