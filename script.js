@@ -28,35 +28,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Page-Specific Logic ---
-    if (document.getElementById('workChart')) {
+    const path = window.location.pathname.split("/").pop();
+
+    if (path === 'index.html' || path === '') {
         loadHomePageData();
     }
-    if (document.getElementById('work-form')) {
+    if (path === 'work-update.html') {
         setupWorkForm();
     }
-    if (document.getElementById('work-list-body')) {
+    if (path === 'work-list.html') {
         loadWorkList();
         document.getElementById('download-pdf').addEventListener('click', downloadWorkReport);
         document.getElementById('delete-selected-btn').addEventListener('click', deleteSelectedWorks);
         document.getElementById('select-all-checkbox').addEventListener('change', toggleSelectAll);
     }
-    if (document.getElementById('note-form')) {
+    if (path === 'add-note.html') {
         setupNoteForm();
     }
-    if (document.getElementById('notes-container')) {
+    if (path === 'notes.html') {
         loadNotes();
         document.getElementById('download-all-notes-btn').addEventListener('click', downloadAllNotes);
     }
-    if (document.getElementById('payment-list-container')) {
+    if (path === 'payments.html') {
         loadPaymentsPage();
         loadPaymentHistory();
         document.getElementById('reset-payments-btn').addEventListener('click', manualResetMonthlyPayments);
     }
-    // New logic for expense pages
-    if (document.getElementById('expense-form')) {
+    if (path === 'expenses.html') {
         document.getElementById('expense-form').addEventListener('submit', handleExpenseFormSubmit);
     }
-    if (document.getElementById('expense-list-body')) {
+    if (path === 'expense-list.html') {
         loadExpenses();
         document.getElementById('download-expenses-pdf').addEventListener('click', downloadExpenseReport);
     }
@@ -572,3 +573,80 @@ function deleteNote(id) { if (confirm('Are you sure you want to delete this note
 function downloadNote(id) { const { jsPDF } = window.jspdf; const doc = new jsPDF(); const note = getNotes().find(n => n.id === id); doc.setFontSize(18); doc.text(note.title, 14, 22); doc.setFontSize(12); const splitContent = doc.splitTextToSize(note.content, 180); doc.text(splitContent, 14, 32); doc.save(`${note.title.replace(/\s/g, '_')}.pdf`); }
 async function shareNote(id) { const note = getNotes().find(n => n.id === id); if (!note) return; const shareData = { title: note.title, text: note.content, }; if (navigator.share) { try { await navigator.share(shareData); } catch (err) { console.error('Error sharing:', err); } } else { alert('Web Share is not supported in your browser.'); } }
 function downloadAllNotes() { const notes = getNotes().sort((a, b) => b.id - a.id); if (notes.length === 0) { alert('There are no notes to download.'); return; } const { jsPDF } = window.jspdf; const doc = new jsPDF(); const margin = 14; const pageHeight = doc.internal.pageSize.height; let yPosition = 22; doc.setFontSize(22); doc.text("All Notes Report", margin, yPosition); yPosition += 15; notes.forEach((note) => { const titleHeight = doc.getTextDimensions(note.title, { fontSize: 18 }).h; const splitContent = doc.splitTextToSize(note.content, doc.internal.pageSize.width - margin * 2); const contentHeight = doc.getTextDimensions(splitContent, { fontSize: 12 }).h; const totalNoteHeight = titleHeight + contentHeight + 15; if (yPosition + totalNoteHeight > pageHeight - margin) { doc.addPage(); yPosition = margin; } doc.setFontSize(18); doc.text(note.title, margin, yPosition); yPosition += 10; doc.setFontSize(12); doc.text(splitContent, margin, yPosition); yPosition += contentHeight + 10; }); doc.save('all_notes_report.pdf'); }
+
+// --- Daily Expense Logic ---
+function handleExpenseFormSubmit(e) {
+    e.preventDefault();
+    const expense = {
+        id: Date.now(),
+        date: document.getElementById('expense-date').value,
+        description: document.getElementById('expense-description').value,
+        amount: parseFloat(document.getElementById('expense-amount').value)
+    };
+    const expenses = getExpenses();
+    expenses.push(expense);
+    saveExpenses(expenses);
+    e.target.reset();
+    alert('Expense added successfully!');
+    window.location.href = 'expense-list.html';
+}
+
+function loadExpenses() {
+    const expenses = getExpenses().sort((a, b) => new Date(b.date) - new Date(a.date));
+    const tableBody = document.getElementById('expense-list-body');
+    tableBody.innerHTML = '';
+
+    if (expenses.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4">No expenses recorded yet.</td></tr>';
+        return;
+    }
+
+    expenses.forEach(expense => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${expense.date}</td>
+            <td>${expense.description}</td>
+            <td>₹${expense.amount.toFixed(2)}</td>
+            <td class="action-buttons">
+                <button class="btn btn-danger" onclick="deleteExpense(${expense.id})">Delete</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function deleteExpense(id) {
+    if (confirm('Are you sure you want to delete this expense?')) {
+        let expenses = getExpenses();
+        expenses = expenses.filter(exp => exp.id !== id);
+        saveExpenses(expenses);
+        loadExpenses();
+    }
+}
+
+function downloadExpenseReport() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const expenses = getExpenses();
+    doc.text("Daily Expense Report", 14, 16);
+    
+    const tableColumn = ["Date", "Description", "Amount (Rs)"];
+    const tableRows = [];
+    
+    expenses.forEach(exp => {
+        const expenseData = [
+            exp.date,
+            exp.description,
+            exp.amount.toFixed(2)
+        ];
+        tableRows.push(expenseData);
+    });
+    
+    doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 20,
+    });
+    
+    doc.save('expense_report.pdf');
+}
