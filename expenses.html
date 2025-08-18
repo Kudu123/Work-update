@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Expenses - Work Tracker</title>
+    <title>Add Expense - Work Tracker</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
     
-    <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -36,7 +35,13 @@
                 </div>
             </li>
             <li class="nav-item"><a href="payments.html" class="nav-link">Monthly Payments</a></li>
-            <li class="nav-item"><a href="expenses.html" class="nav-link">Daily Expenses</a></li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Daily Expenses ▾</a>
+                <div class="dropdown-content">
+                    <a href="expenses.html">Add Expense</a>
+                    <a href="expense-list.html">Expense List</a>
+                </div>
+            </li>
         </ul>
     </nav>
 
@@ -51,11 +56,10 @@
     <div class="main-content">
         <div class="main-container">
             <header class="page-header">
-                <h1><i class="fas fa-wallet"></i> Daily Expense Tracker</h1>
+                <h1><i class="fas fa-wallet"></i> Add New Expense</h1>
             </header>
 
             <div class="card">
-                <h2>Add New Expense</h2>
                 <form id="expense-form">
                     <div class="form-group">
                         <label for="expense-date">Date:</label>
@@ -72,33 +76,9 @@
                     <button type="submit" class="btn">Add Expense</button>
                 </form>
             </div>
-
-            <div class="card">
-                <h2>Expense List</h2>
-                <div class="action-bar">
-                    <button id="download-expenses-pdf" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> Download Report</button>
-                </div>
-                <div class="table-container">
-                    <table id="expense-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Description</th>
-                                <th>Amount</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expense-list-body">
-                            <!-- Expense data will be inserted here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     </div>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
