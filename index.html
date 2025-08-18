@@ -6,14 +6,12 @@
     <title>Dashboard - Work Tracker</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
     
-    <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
-    <!-- Chart.js Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 </head>
@@ -39,6 +37,7 @@
                 </div>
             </li>
             <li class="nav-item"><a href="payments.html" class="nav-link">Monthly Payments</a></li>
+            <li class="nav-item"><a href="expenses.html" class="nav-link">Daily Expenses</a></li>
         </ul>
     </nav>
 
@@ -60,7 +59,7 @@
             <div class="quick-actions">
                 <a href="work-update.html" class="action-btn primary"><i class="fas fa-plus-circle"></i><span>Add New Work</span></a>
                 <a href="add-note.html" class="action-btn secondary"><i class="fas fa-file-alt"></i><span>Create a Note</span></a>
-                <a href="payments.html" class="action-btn payments"><i class="fas fa-credit-card"></i><span>Add Payments</span></a>
+                <a href="expenses.html" class="action-btn tertiary"><i class="fas fa-wallet"></i><span>Add Expense</span></a>
             </div>
 
             <div class="grid-container">
@@ -69,7 +68,7 @@
                     <div class="summary-item">
                         <div class="summary-icon icon-paid"><i class="fas fa-indian-rupee-sign"></i></div>
                         <div class="summary-text">
-                            <span class="summary-label">Total Paid Amount</span>
+                            <span class="summary-label">Total Paid Work Amount</span>
                             <span class="summary-value" id="total-amount">₹0.00</span>
                         </div>
                     </div>
@@ -86,21 +85,23 @@
 
                 <div class="card">
                     <h2><i class="fas fa-users"></i> Monthly Payments</h2>
-                    <ul class="payment-summary-list" id="monthly-payments-summary">
-                        <!-- Payment summary will be inserted here -->
-                    </ul>
+                    <ul class="payment-summary-list" id="monthly-payments-summary"></ul>
                 </div>
 
                 <div class="card">
-                    <h2><i class="fas fa-sticky-note"></i> Newest Notes</h2>
-                    <div id="notes-summary">
-                        <div class="summary-item-note"><p>No notes found.</p></div>
+                    <h2><i class="fas fa-chart-pie"></i> Expense Summary</h2>
+                    <div class="summary-item">
+                        <div class="summary-icon icon-expense"><i class="fas fa-arrow-down"></i></div>
+                        <div class="summary-text">
+                            <span class="summary-label">Today's Total Expenses</span>
+                            <span class="summary-value" id="today-expenses">₹0.00</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="card chart-container">
-                 <h2><i class="fas fa-chart-line"></i> Monthly Earnings (Paid)</h2>
+                 <h2><i class="fas fa-chart-line"></i> Monthly Earnings vs Expenses</h2>
                  <canvas id="workChart"></canvas>
             </div>
         </div>
