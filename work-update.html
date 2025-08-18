@@ -6,7 +6,6 @@
     <title>Work Update - Work Tracker</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
     
-    <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,7 +14,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Sidebar Navigation -->
     <nav class="sidebar" id="sidebar-menu">
         <div class="sidebar-header">
             <a href="index.html" class="nav-logo">WorkTracker</a>
@@ -37,20 +35,24 @@
                 </div>
             </li>
             <li class="nav-item"><a href="payments.html" class="nav-link">Monthly Payments</a></li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Daily Expenses ▾</a>
+                <div class="dropdown-content">
+                    <a href="expenses.html">Add Expense</a>
+                    <a href="expense-list.html">Expense List</a>
+                </div>
+            </li>
         </ul>
     </nav>
 
-    <!-- Hamburger Button for Mobile -->
     <button class="hamburger" id="hamburger-menu">
         <span class="bar"></span>
         <span class="bar"></span>
         <span class="bar"></span>
     </button>
 
-    <!-- Overlay for Mobile Menu -->
     <div class="content-overlay" id="content-overlay"></div>
 
-    <!-- Main Content Wrapper -->
     <div class="main-content">
         <div class="main-container">
             <header class="page-header">
@@ -66,15 +68,15 @@
                     </div>
                     <div class="form-group">
                         <label for="work-type">Work Type:</label>
-                        <input type="text" id="work-type" placeholder="" required>
+                        <input type="text" id="work-type" placeholder="e.g., Plumbing, Painting" required>
                     </div>
                     <div class="form-group">
                         <label for="num-employees">Number of Employees:</label>
-                        <input type="number" id="num-employees" placeholder="" required>
+                        <input type="number" id="num-employees" placeholder="e.g., 4" required>
                     </div>
                     <div class="form-group">
                         <label for="rate-per-employee">Rate per Worker (₹):</label>
-                        <input type="number" id="rate-per-employee" placeholder="" required>
+                        <input type="number" id="rate-per-employee" placeholder="e.g., 1200" required>
                     </div>
                     <div class="form-group">
                         <label for="total-amount">Calculated Total Amount (₹):</label>
@@ -82,11 +84,11 @@
                     </div>
                     <div class="form-group">
                         <label for="employee-names">Employee Names:</label>
-                        <textarea id="employee-names" rows="2" placeholder=""></textarea>
+                        <textarea id="employee-names" rows="2" placeholder="e.g., John, Doe, Jane"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="location">Location:</label>
-                        <input type="text" id="location" placeholder="" required>
+                        <input type="text" id="location" placeholder="e.g., Site A, City" required>
                     </div>
                     <div class="form-group">
                         <label for="description">Description:</label>
