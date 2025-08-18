@@ -28,36 +28,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Page-Specific Logic ---
-    const path = window.location.pathname.split("/").pop();
-
-    if (path === 'index.html' || path === '') {
+    if (document.getElementById('workChart')) {
         loadHomePageData();
     }
-    if (path === 'work-update.html') {
+    if (document.getElementById('work-form')) {
         setupWorkForm();
     }
-    if (path === 'work-list.html') {
+    if (document.getElementById('work-list-body')) {
         loadWorkList();
         document.getElementById('download-pdf').addEventListener('click', downloadWorkReport);
         document.getElementById('delete-selected-btn').addEventListener('click', deleteSelectedWorks);
         document.getElementById('select-all-checkbox').addEventListener('change', toggleSelectAll);
     }
-    if (path === 'add-note.html') {
+    if (document.getElementById('note-form')) {
         setupNoteForm();
     }
-    if (path === 'notes.html') {
+    if (document.getElementById('notes-container')) {
         loadNotes();
         document.getElementById('download-all-notes-btn').addEventListener('click', downloadAllNotes);
     }
-    if (path === 'payments.html') {
+    if (document.getElementById('payment-list-container')) {
         loadPaymentsPage();
         loadPaymentHistory();
         document.getElementById('reset-payments-btn').addEventListener('click', manualResetMonthlyPayments);
     }
-    if (path === 'expenses.html') {
+    if (document.getElementById('expense-form')) {
         document.getElementById('expense-form').addEventListener('submit', handleExpenseFormSubmit);
     }
-    if (path === 'expense-list.html') {
+    if (document.getElementById('expense-list-body')) {
         loadExpenses();
         document.getElementById('download-expenses-pdf').addEventListener('click', downloadExpenseReport);
     }
