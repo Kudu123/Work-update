@@ -6,47 +6,48 @@
     <title>Dashboard - Work Tracker</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
     
+    <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
+    <!-- Chart.js Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 </head>
 <body>
-   
-<nav class="sidebar" id="sidebar-menu">
-    <div class="sidebar-header">
-        <a href="index.html" class="nav-logo">WorkTracker</a>
-    </div>
-    <ul class="nav-menu">
-        <li class="nav-item"><a href="index.html" class="nav-link">Dashboard</a></li>
-        <li class="nav-item dropdown">
-            <a href="#" class="nav-link">Work ▾</a>
-            <div class="dropdown-content">
-                <a href="work-update.html">Add New Work</a>
-                <a href="work-list.html">Work List</a>
-            </div>
-        </li>
-        <li class="nav-item dropdown">
-            <a href="#" class="nav-link">Notes ▾</a>
-            <div class="dropdown-content">
-                <a href="add-note.html">Add Note</a>
-                <a href="notes.html">View Notes</a>
-            </div>
-        </li>
-        <li class="nav-item"><a href="payments.html" class="nav-link">Monthly Payments</a></li>
-        <li class="nav-item dropdown">
-            <a href="#" class="nav-link">Daily Expenses ▾</a>
-            <div class="dropdown-content">
-                <a href="expenses.html">Add Expense</a>
-                <a href="expense-list.html">Expense List</a>
-            </div>
-        </li>
-    </ul>
-</nav>
+    <nav class="sidebar" id="sidebar-menu">
+        <div class="sidebar-header">
+            <a href="index.html" class="nav-logo">WorkTracker</a>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html" class="nav-link">Dashboard</a></li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Work ▾</a>
+                <div class="dropdown-content">
+                    <a href="work-update.html">Add New Work</a>
+                    <a href="work-list.html">Work List</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Notes ▾</a>
+                <div class="dropdown-content">
+                    <a href="add-note.html">Add Note</a>
+                    <a href="notes.html">View Notes</a>
+                </div>
+            </li>
+            <li class="nav-item"><a href="payments.html" class="nav-link">Monthly Payments</a></li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link">Daily Expenses ▾</a>
+                <div class="dropdown-content">
+                    <a href="expenses.html">Add Expense</a>
+                    <a href="expense-list.html">Expense List</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
 
     <button class="hamburger" id="hamburger-menu">
         <span class="bar"></span>
@@ -92,7 +93,9 @@
 
                 <div class="card">
                     <h2><i class="fas fa-users"></i> Monthly Payments</h2>
-                    <ul class="payment-summary-list" id="monthly-payments-summary"></ul>
+                    <ul class="payment-summary-list" id="monthly-payments-summary">
+                        <!-- Payment summary will be inserted here -->
+                    </ul>
                 </div>
 
                 <div class="card">
