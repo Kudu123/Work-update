@@ -1,3 +1,94 @@
+// Function to create and append the confirmation modal to the body
+const modal = document.createElement('div');
+modal.id = 'confirmation-modal';
+modal.className = 'modal';
+modal.innerHTML = `
+    <div class="modal-content">
+        <p id="modal-message"></p>
+        <div class="modal-buttons">
+            <button class="btn btn-danger" id="modal-confirm-btn">Yes</button>
+            <button class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+        </div>
+    </div>
+`;
+document.body.appendChild(modal);
+
+// Create the monthly expenses modal dynamically
+const expensesModal = document.createElement('div');
+expensesModal.id = 'expenses-modal';
+expensesModal.className = 'modal';
+expensesModal.innerHTML = `
+    <div class="modal-content">
+        <h3 id="expenses-modal-title"></h3>
+        <div class="table-container">
+            <table id="monthly-expense-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="monthly-expense-body">
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-buttons" style="margin-top: 2rem;">
+            <button class="btn btn-secondary" id="expenses-modal-close-btn">Close</button>
+        </div>
+    </div>
+`;
+document.body.appendChild(expensesModal);
+
+const modalMessage = document.getElementById('modal-message');
+const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+const modalCancelBtn = document.getElementById('modal-cancel-btn');
+let confirmCallback = null;
+
+function showCustomConfirmation(message, callback) {
+    modalMessage.textContent = message;
+    modal.classList.add('active');
+    confirmCallback = callback;
+    modalConfirmBtn.style.display = 'inline-flex';
+    modalCancelBtn.style.display = 'inline-flex';
+}
+
+function showCustomAlert(message) {
+    modalMessage.textContent = message;
+    modal.classList.add('active');
+    modalConfirmBtn.style.display = 'none';
+    modalCancelBtn.style.display = 'none';
+    const okBtn = document.createElement('button');
+    okBtn.className = 'btn';
+    okBtn.textContent = 'OK';
+    okBtn.onclick = () => {
+        modal.classList.remove('active');
+        okBtn.remove();
+    };
+    document.querySelector('.modal-buttons').appendChild(okBtn);
+}
+
+modalConfirmBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+    if (confirmCallback) {
+        confirmCallback(true);
+        confirmCallback = null;
+    }
+});
+
+modalCancelBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+    if (confirmCallback) {
+        confirmCallback(false);
+        confirmCallback = null;
+    }
+});
+
+// Close expenses modal
+document.getElementById('expenses-modal-close-btn').addEventListener('click', () => {
+    expensesModal.classList.remove('active');
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- Sidebar Navigation Logic ---
     const hamburger = document.getElementById('hamburger-menu');
@@ -27,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Page-Specific Logic ---
+    // --- Page-Specific Logic (Corrected) ---
     if (document.getElementById('workChart')) {
         loadHomePageData();
     }
@@ -58,6 +149,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('expense-list-body')) {
         loadExpenses();
         document.getElementById('download-expenses-pdf').addEventListener('click', downloadExpenseReport);
+        document.getElementById('filter-btn').addEventListener('click', filterExpenses);
+        document.getElementById('clear-filter-btn').addEventListener('click', clearFilter);
     }
 });
 
@@ -138,7 +231,7 @@ function markPersonAsPaid(name) {
 
         const allPaid = payments.every(p => p.isPaid);
         if (allPaid) {
-            alert('All payments for the month are complete! Archiving and resetting for the new month.');
+            showCustomAlert('All payments for the month are complete! Archiving and resetting for the new month.');
             archiveAndResetPayments(false);
         } else {
             loadPaymentsPage();
@@ -147,9 +240,11 @@ function markPersonAsPaid(name) {
 }
 
 function manualResetMonthlyPayments() {
-    if (confirm('Are you sure you want to reset for a new month? This will archive the current data and mark everyone as unpaid.')) {
-        archiveAndResetPayments(true);
-    }
+    showCustomConfirmation('Are you sure you want to reset for a new month? This will archive the current data and mark everyone as unpaid.', (result) => {
+        if (result) {
+            archiveAndResetPayments(true);
+        }
+    });
 }
 
 function archiveAndResetPayments(isManualReset) {
@@ -166,7 +261,7 @@ function archiveAndResetPayments(isManualReset) {
     saveMonthlyPayments(newPayments);
 
     if (isManualReset) {
-        alert(`Payments for ${monthYear} have been archived. The list is now reset for the new month.`);
+        showCustomAlert(`Payments for ${monthYear} have been archived. The list is now reset for the new month.`);
     }
     
     loadPaymentsPage();
@@ -197,7 +292,11 @@ function loadPaymentHistory() {
         const originalIndex = history.length - 1 - index;
         deleteBtn.onclick = (e) => {
             e.preventDefault();
-            deletePaymentHistory(originalIndex);
+            showCustomConfirmation('Are you sure you want to permanently delete this history entry?', (result) => {
+                if (result) {
+                    deletePaymentHistory(originalIndex);
+                }
+            });
         };
 
         summaryElement.appendChild(summaryText);
@@ -218,8 +317,8 @@ function loadPaymentHistory() {
             li.innerHTML = `
                 <span class="name">${payer.name}</span>
                 <div class="history-status">
-                     <span class="status-icon ${iconClass}"></span>
-                     ${paidDateText}
+                    <span class="status-icon ${iconClass}"></span>
+                    ${paidDateText}
                 </div>
             `;
             ul.appendChild(li);
@@ -232,10 +331,6 @@ function loadPaymentHistory() {
 }
 
 function deletePaymentHistory(index) {
-    if (!confirm('Are you sure you want to permanently delete this history entry?')) {
-        return;
-    }
-
     let history = getPaymentHistory();
     history.splice(index, 1);
     savePaymentHistory(history);
@@ -272,19 +367,7 @@ function loadHomePageData() {
         .reduce((sum, exp) => sum + exp.amount, 0);
     document.getElementById('today-expenses').textContent = `₹${todayExpenses.toFixed(2)}`;
 
-    const notesSummaryContainer = document.getElementById('notes-summary');
-    const newestNotes = getNotes().sort((a, b) => b.id - a.id).slice(0, 3);
-    notesSummaryContainer.innerHTML = '';
-    if (newestNotes.length > 0) {
-        newestNotes.forEach(note => {
-            const noteDiv = document.createElement('div');
-            noteDiv.className = 'summary-item-note';
-            noteDiv.innerHTML = `<h4>${note.title}</h4><p>${note.content.substring(0, 70)}...</p>`;
-            notesSummaryContainer.appendChild(noteDiv);
-        });
-    } else {
-        notesSummaryContainer.innerHTML = '<div class="summary-item-note"><p>No notes found.</p></div>';
-    }
+    loadRecentExpenses();
 
     const payments = getMonthlyPayments();
     const paymentSummaryContainer = document.getElementById('monthly-payments-summary');
@@ -297,11 +380,35 @@ function loadHomePageData() {
         paymentSummaryContainer.appendChild(li);
     });
 
-    renderWorkChart(works, paymentHistory, currentPayments, expenses);
+    const monthlyData = getMonthlyData(works, paymentHistory, currentPayments, expenses);
+    renderWorkChart(monthlyData.sortedMonths, monthlyData.monthlyEarnings, monthlyData.monthlyExpenses);
+    displayMonthlySummary(monthlyData.sortedMonths, monthlyData.monthlyEarnings, monthlyData.monthlyExpenses);
 }
 
-function renderWorkChart(works, paymentHistory, currentPayments, expenses) {
-    const ctx = document.getElementById('workChart').getContext('2d');
+function loadRecentExpenses() {
+    const expenses = getExpenses().sort((a, b) => new Date(b.date) - new Date(a.date));
+    const recentExpensesList = document.getElementById('recent-expenses-list');
+    recentExpensesList.innerHTML = '';
+    const recent = expenses.slice(0, 5);
+
+    if (recent.length > 0) {
+        recent.forEach(exp => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="expense-item-info">
+                    <span class="expense-date">${exp.date}</span>
+                    <span class="expense-description">${exp.description}</span>
+                </div>
+                <span class="expense-amount">₹${exp.amount.toFixed(2)}</span>
+            `;
+            recentExpensesList.appendChild(li);
+        });
+    } else {
+        recentExpensesList.innerHTML = '<li>No recent expenses found.</li>';
+    }
+}
+
+function getMonthlyData(works, paymentHistory, currentPayments, expenses) {
     const monthlyEarnings = {};
     const monthlyExpenses = {};
 
@@ -341,6 +448,11 @@ function renderWorkChart(works, paymentHistory, currentPayments, expenses) {
     const allMonths = [...new Set([...Object.keys(monthlyEarnings), ...Object.keys(monthlyExpenses)])];
     const sortedMonths = allMonths.sort((a, b) => new Date(a) - new Date(b));
     
+    return { sortedMonths, monthlyEarnings, monthlyExpenses };
+}
+
+function renderWorkChart(sortedMonths, monthlyEarnings, monthlyExpenses) {
+    const ctx = document.getElementById('workChart').getContext('2d');
     const earningsData = sortedMonths.map(month => monthlyEarnings[month] || 0);
     const expensesData = sortedMonths.map(month => monthlyExpenses[month] || 0);
 
@@ -362,7 +474,10 @@ function renderWorkChart(works, paymentHistory, currentPayments, expenses) {
                     backgroundColor: 'rgba(74, 144, 226, 0.6)',
                     borderColor: 'rgba(74, 144, 226, 1)',
                     borderWidth: 1,
-                    borderRadius: 5
+                    borderRadius: 5,
+                    datalabels: {
+                        color: 'white'
+                    }
                 },
                 {
                     label: 'Total Monthly Expenses (₹)',
@@ -370,7 +485,10 @@ function renderWorkChart(works, paymentHistory, currentPayments, expenses) {
                     backgroundColor: 'rgba(220, 53, 69, 0.6)',
                     borderColor: 'rgba(220, 53, 69, 1)',
                     borderWidth: 1,
-                    borderRadius: 5
+                    borderRadius: 5,
+                    datalabels: {
+                        color: 'white'
+                    }
                 }
             ]
         },
@@ -390,10 +508,84 @@ function renderWorkChart(works, paymentHistory, currentPayments, expenses) {
                     enabled: true
                 },
                 datalabels: {
-                    display: false
+                    display: true,
+                    align: 'end',
+                    anchor: 'end',
+                    formatter: (value) => `₹${value.toFixed(2)}`,
+                    font: {
+                        weight: 'bold'
+                    }
                 }
             }
         }
+    });
+}
+
+function showMonthlyExpenses(month) {
+    const allExpenses = getExpenses();
+    const monthlyExpenses = allExpenses.filter(exp => {
+        const expDate = new Date(exp.date);
+        const expMonth = expDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+        return expMonth === month;
+    });
+
+    const tableBody = document.getElementById('monthly-expense-body');
+    tableBody.innerHTML = '';
+    
+    if (monthlyExpenses.length > 0) {
+        monthlyExpenses.forEach(exp => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${exp.date}</td>
+                <td>${exp.description}</td>
+                <td>₹${exp.amount.toFixed(2)}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } else {
+        tableBody.innerHTML = '<tr><td colspan="3">No expenses for this month.</td></tr>';
+    }
+
+    document.getElementById('expenses-modal-title').textContent = `Expenses for ${month}`;
+    expensesModal.classList.add('active');
+}
+
+function displayMonthlySummary(sortedMonths, monthlyEarnings, monthlyExpenses) {
+    const container = document.getElementById('monthly-summary-container');
+    if (!container) return; // Prevent errors if the element doesn't exist
+
+    container.innerHTML = '';
+    if (sortedMonths.length === 0) {
+        container.innerHTML = '<p>No monthly data to display yet.</p>';
+        return;
+    }
+
+    sortedMonths.forEach(month => {
+        const earnings = monthlyEarnings[month] || 0;
+        const expenses = monthlyExpenses[month] || 0;
+
+        const summaryCard = document.createElement('div');
+        summaryCard.className = 'card';
+        summaryCard.innerHTML = `
+            <h3>${month}</h3>
+            <div class="grid-container" style="margin-top: 1rem;">
+                <div class="summary-item">
+                    <div class="summary-icon icon-paid"><i class="fas fa-indian-rupee-sign"></i></div>
+                    <div class="summary-text">
+                        <span class="summary-label">Earnings</span>
+                        <span class="summary-value">₹${earnings.toFixed(2)}</span>
+                    </div>
+                </div>
+                <div class="summary-item" onclick="showMonthlyExpenses('${month}')" style="cursor:pointer;">
+                    <div class="summary-icon icon-expense"><i class="fas fa-arrow-down"></i></div>
+                    <div class="summary-text">
+                        <span class="summary-label">Expenses</span>
+                        <span class="summary-value">₹${expenses.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(summaryCard);
     });
 }
 
@@ -460,7 +652,7 @@ function handleWorkFormSubmit(e) {
     saveWorks(works);
     e.target.reset();
     document.getElementById('work-id').value = '';
-    alert('Work entry saved successfully!');
+    showCustomAlert('Work entry saved successfully!');
     window.location.href = 'work-list.html';
 }
 
@@ -511,10 +703,48 @@ function loadWorkList() {
     document.getElementById('select-all-checkbox').checked = false;
 }
 
-function markAsPaid(id) { let works = getWorks(); const workIndex = works.findIndex(w => w.id === id); if (workIndex > -1) { works[workIndex].status = 'paid'; works[workIndex].paidDate = new Date().toISOString(); saveWorks(works); loadWorkList(); } }
+function markAsPaid(id) {
+    showCustomConfirmation('Are you sure you want to mark this entry as paid?', (result) => {
+        if (result) {
+            let works = getWorks();
+            const workIndex = works.findIndex(w => w.id === id);
+            if (workIndex > -1) {
+                works[workIndex].status = 'paid';
+                works[workIndex].paidDate = new Date().toISOString();
+                saveWorks(works);
+                loadWorkList();
+            }
+        }
+    });
+}
+
 function editWork(id) { const work = getWorks().find(w => w.id === id); localStorage.setItem('editWorkId', JSON.stringify(work)); window.location.href = 'work-update.html'; }
-function deleteWork(id) { if (confirm('Are you sure you want to delete this work entry?')) { let works = getWorks().filter(w => w.id !== id); saveWorks(works); loadWorkList(); } }
-function deleteSelectedWorks() { const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked'); if (selectedCheckboxes.length === 0) { alert('Please select at least one row to delete.'); return; } if (confirm(`Are you sure you want to delete the ${selectedCheckboxes.length} selected entries?`)) { const idsToDelete = Array.from(selectedCheckboxes).map(cb => parseInt(cb.value)); let works = getWorks().filter(work => !idsToDelete.includes(work.id)); saveWorks(works); loadWorkList(); } }
+
+function deleteWork(id) {
+    showCustomConfirmation('Are you sure you want to delete this work entry?', (result) => {
+        if (result) {
+            let works = getWorks().filter(w => w.id !== id);
+            saveWorks(works);
+            loadWorkList();
+        }
+    });
+}
+
+function deleteSelectedWorks() {
+    const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
+    if (selectedCheckboxes.length === 0) {
+        showCustomAlert('Please select at least one row to delete.');
+        return;
+    }
+    showCustomConfirmation(`Are you sure you want to delete the ${selectedCheckboxes.length} selected entries?`, (result) => {
+        if (result) {
+            const idsToDelete = Array.from(selectedCheckboxes).map(cb => parseInt(cb.value));
+            let works = getWorks().filter(work => !idsToDelete.includes(work.id));
+            saveWorks(works);
+            loadWorkList();
+        }
+    });
+}
 
 function toggleSelectAll() {
     const masterCheckbox = document.getElementById('select-all-checkbox');
@@ -542,7 +772,7 @@ function downloadWorkReport() {
         const workData = [
             work.date,
             work.type,
-            `Rs. ${work.amount}`,
+            `₹${work.amount}`,
             work.location,
             work.numEmployees,
             work.employeeNames,
@@ -564,13 +794,21 @@ function downloadWorkReport() {
 
 // --- NOTES LOGIC ---
 function setupNoteForm() { document.getElementById('note-form').addEventListener('submit', handleNoteFormSubmit); const noteToEdit = JSON.parse(localStorage.getItem('editNoteId')); if (noteToEdit) { document.getElementById('note-id').value = noteToEdit.id; document.getElementById('note-title').value = noteToEdit.title; document.getElementById('note-content').value = noteToEdit.content; localStorage.removeItem('editNoteId'); } }
-function handleNoteFormSubmit(e) { e.preventDefault(); const notes = getNotes(); const noteId = document.getElementById('note-id').value; const noteData = { title: document.getElementById('note-title').value, content: document.getElementById('note-content').value }; if (noteId) { const noteIndex = notes.findIndex(n => n.id == noteId); notes[noteIndex] = { ...notes[noteIndex], ...noteData }; } else { noteData.id = Date.now(); notes.push(noteData); } saveNotes(notes); e.target.reset(); document.getElementById('note-id').value = ''; alert('Note saved successfully!'); window.location.href = 'notes.html'; }
+function handleNoteFormSubmit(e) { e.preventDefault(); const notes = getNotes(); const noteId = document.getElementById('note-id').value; const noteData = { title: document.getElementById('note-title').value, content: document.getElementById('note-content').value }; if (noteId) { const noteIndex = notes.findIndex(n => n.id == noteId); notes[noteIndex] = { ...notes[noteIndex], ...noteData }; } else { noteData.id = Date.now(); notes.push(noteData); } saveNotes(notes); e.target.reset(); document.getElementById('note-id').value = ''; showCustomAlert('Note saved successfully!'); window.location.href = 'notes.html'; }
 function loadNotes() { const notes = getNotes().sort((a, b) => b.id - a.id); const container = document.getElementById('notes-container'); container.innerHTML = ''; if (notes.length === 0) { container.innerHTML = '<p>You have no notes. Go ahead and add one!</p>'; return; } notes.forEach(note => { const noteCard = document.createElement('div'); noteCard.className = 'note-card'; noteCard.innerHTML = `<div><h3>${note.title}</h3><p>${note.content.replace(/\n/g, '<br>')}</p></div><div class="note-card-actions"><button class="btn btn-edit" onclick="editNote(${note.id})">Edit</button><button class="btn btn-danger" onclick="deleteNote(${note.id})">Delete</button><button class="btn btn-secondary" onclick="downloadNote(${note.id})">Download</button><button class="btn btn-share" onclick="shareNote(${note.id})">Share</button></div>`; container.appendChild(noteCard); }); }
 function editNote(id) { const note = getNotes().find(n => n.id === id); localStorage.setItem('editNoteId', JSON.stringify(note)); window.location.href = 'add-note.html'; }
-function deleteNote(id) { if (confirm('Are you sure you want to delete this note?')) { let notes = getNotes().filter(n => n.id !== id); saveNotes(notes); loadNotes(); } }
+function deleteNote(id) {
+    showCustomConfirmation('Are you sure you want to delete this note?', (result) => {
+        if (result) {
+            let notes = getNotes().filter(n => n.id !== id);
+            saveNotes(notes);
+            loadNotes();
+        }
+    });
+}
 function downloadNote(id) { const { jsPDF } = window.jspdf; const doc = new jsPDF(); const note = getNotes().find(n => n.id === id); doc.setFontSize(18); doc.text(note.title, 14, 22); doc.setFontSize(12); const splitContent = doc.splitTextToSize(note.content, 180); doc.text(splitContent, 14, 32); doc.save(`${note.title.replace(/\s/g, '_')}.pdf`); }
-async function shareNote(id) { const note = getNotes().find(n => n.id === id); if (!note) return; const shareData = { title: note.title, text: note.content, }; if (navigator.share) { try { await navigator.share(shareData); } catch (err) { console.error('Error sharing:', err); } } else { alert('Web Share is not supported in your browser.'); } }
-function downloadAllNotes() { const notes = getNotes().sort((a, b) => b.id - a.id); if (notes.length === 0) { alert('There are no notes to download.'); return; } const { jsPDF } = window.jspdf; const doc = new jsPDF(); const margin = 14; const pageHeight = doc.internal.pageSize.height; let yPosition = 22; doc.setFontSize(22); doc.text("All Notes Report", margin, yPosition); yPosition += 15; notes.forEach((note) => { const titleHeight = doc.getTextDimensions(note.title, { fontSize: 18 }).h; const splitContent = doc.splitTextToSize(note.content, doc.internal.pageSize.width - margin * 2); const contentHeight = doc.getTextDimensions(splitContent, { fontSize: 12 }).h; const totalNoteHeight = titleHeight + contentHeight + 15; if (yPosition + totalNoteHeight > pageHeight - margin) { doc.addPage(); yPosition = margin; } doc.setFontSize(18); doc.text(note.title, margin, yPosition); yPosition += 10; doc.setFontSize(12); doc.text(splitContent, margin, yPosition); yPosition += contentHeight + 10; }); doc.save('all_notes_report.pdf'); }
+async function shareNote(id) { const note = getNotes().find(n => n.id === id); if (!note) return; const shareData = { title: note.title, text: note.content, }; if (navigator.share) { try { await navigator.share(shareData); } catch (err) { console.error('Error sharing:', err); } } else { showCustomAlert('Web Share is not supported in your browser.'); } }
+function downloadAllNotes() { const notes = getNotes().sort((a, b) => b.id - a.id); if (notes.length === 0) { showCustomAlert('There are no notes to download.'); return; } const { jsPDF } = window.jspdf; const doc = new jsPDF(); const margin = 14; const pageHeight = doc.internal.pageSize.height; let yPosition = 22; doc.setFontSize(22); doc.text("All Notes Report", margin, yPosition); yPosition += 15; notes.forEach((note) => { const titleHeight = doc.getTextDimensions(note.title, { fontSize: 18 }).h; const splitContent = doc.splitTextToSize(note.content, doc.internal.pageSize.width - margin * 2); const contentHeight = doc.getTextDimensions(splitContent, { fontSize: 12 }).h; const totalNoteHeight = titleHeight + contentHeight + 10; if (yPosition + totalNoteHeight > pageHeight - margin) { doc.addPage(); yPosition = margin; } doc.setFontSize(18); doc.text(note.title, margin, yPosition); yPosition += 10; doc.setFontSize(12); doc.text(splitContent, margin, yPosition); yPosition += contentHeight + 10; }); doc.save('all_notes_report.pdf'); }
 
 // --- Daily Expense Logic ---
 function handleExpenseFormSubmit(e) {
@@ -585,17 +823,30 @@ function handleExpenseFormSubmit(e) {
     expenses.push(expense);
     saveExpenses(expenses);
     e.target.reset();
-    alert('Expense added successfully!');
+    showCustomAlert('Expense added successfully!');
     window.location.href = 'expense-list.html';
 }
 
-function loadExpenses() {
-    const expenses = getExpenses().sort((a, b) => new Date(b.date) - new Date(a.date));
+function loadExpenses(filteredExpenses = null) {
+    const expenses = filteredExpenses || getExpenses().sort((a, b) => new Date(b.date) - new Date(a.date));
     const tableBody = document.getElementById('expense-list-body');
     tableBody.innerHTML = '';
 
+    const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const totalRow = document.createElement('tr');
+    totalRow.id = 'total-row';
+    totalRow.innerHTML = `
+        <td colspan="2" style="font-weight: bold; text-align: right;">Total Expenses:</td>
+        <td style="font-weight: bold;">₹${totalExpenses.toFixed(2)}</td>
+        <td></td>
+    `;
+    tableBody.appendChild(totalRow);
+
     if (expenses.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="4">No expenses recorded yet.</td></tr>';
+        const noResultsRow = document.createElement('tr');
+        noResultsRow.innerHTML = '<td colspan="4" class="no-results">No expenses recorded for this day.</td>';
+        tableBody.appendChild(noResultsRow);
+        document.getElementById('total-row').style.display = 'none';
         return;
     }
 
@@ -614,24 +865,56 @@ function loadExpenses() {
 }
 
 function deleteExpense(id) {
-    if (confirm('Are you sure you want to delete this expense?')) {
-        let expenses = getExpenses();
-        expenses = expenses.filter(exp => exp.id !== id);
-        saveExpenses(expenses);
-        loadExpenses();
+    showCustomConfirmation('Are you sure you want to delete this expense?', (result) => {
+        if (result) {
+            let expenses = getExpenses();
+            expenses = expenses.filter(exp => exp.id !== id);
+            saveExpenses(expenses);
+            loadExpenses();
+        }
+    });
+}
+
+function filterExpenses() {
+    const selectedDate = document.getElementById('filter-date').value;
+    if (!selectedDate) {
+        showCustomAlert('Please select a date to filter.');
+        return;
     }
+    const allExpenses = getExpenses();
+    const filtered = allExpenses.filter(exp => exp.date === selectedDate);
+    loadExpenses(filtered);
+}
+
+function clearFilter() {
+    document.getElementById('filter-date').value = '';
+    loadExpenses();
 }
 
 function downloadExpenseReport() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    const expenses = getExpenses();
+    
+    // Get the filtered date from the input field
+    const selectedDate = document.getElementById('filter-date').value;
+    let expensesToDownload = getExpenses();
+
+    // If a date is selected, filter the expenses
+    if (selectedDate) {
+        expensesToDownload = expensesToDownload.filter(exp => exp.date === selectedDate);
+    }
+    
+    if (expensesToDownload.length === 0) {
+        showCustomAlert('No expenses to download. Please add some expenses or choose a different filter.');
+        return;
+    }
+
     doc.text("Daily Expense Report", 14, 16);
     
     const tableColumn = ["Date", "Description", "Amount (Rs)"];
     const tableRows = [];
     
-    expenses.forEach(exp => {
+    expensesToDownload.forEach(exp => {
         const expenseData = [
             exp.date,
             exp.description,
@@ -646,5 +929,34 @@ function downloadExpenseReport() {
         startY: 20,
     });
     
-    doc.save('expense_report.pdf');
+    const fileName = selectedDate ? `expense_report_${selectedDate}.pdf` : 'expense_report_all.pdf';
+    doc.save(fileName);
+}
+function loadRecentExpenses() {
+    // 1. Get all expenses and sort them in descending order by date.
+    // This puts the newest expenses at the beginning of the array.
+    const expenses = getExpenses().sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    const recentExpensesList = document.getElementById('recent-expenses-list');
+    recentExpensesList.innerHTML = '';
+    
+    // 2. Use .slice(0, 5) to get the first 5 elements from the sorted array.
+    // This effectively gives you the 5 most recent expenses.
+    const recent = expenses.slice(0, 5);
+
+    if (recent.length > 0) {
+        recent.forEach(exp => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="expense-item-info">
+                    <span class="expense-date">${exp.date}</span>
+                    <span class="expense-description">${exp.description}</span>
+                </div>
+                <span class="expense-amount">₹${exp.amount.toFixed(2)}</span>
+            `;
+            recentExpensesList.appendChild(li);
+        });
+    } else {
+        recentExpensesList.innerHTML = '<li>No recent expenses found.</li>';
+    }
 }
