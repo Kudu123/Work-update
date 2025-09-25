@@ -6,16 +6,16 @@
     <title>Dashboard - Work Tracker</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
     
-    <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
-    <!-- Chart.js Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
     <nav class="sidebar" id="sidebar-menu">
@@ -94,8 +94,7 @@
                 <div class="card">
                     <h2><i class="fas fa-users"></i> Monthly Payments</h2>
                     <ul class="payment-summary-list" id="monthly-payments-summary">
-                        <!-- Payment summary will be inserted here -->
-                    </ul>
+                        </ul>
                 </div>
 
                 <div class="card">
@@ -108,12 +107,22 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="card" id="recent-expenses-container">
+                    <h3><i class="fas fa-history"></i> Recent Expenses</h3>
+                    <ul id="recent-expenses-list">
+                        </ul>
+                </div>
             </div>
 
             <div class="card chart-container">
-                 <h2><i class="fas fa-chart-line"></i> Monthly Earnings vs Expenses</h2>
-                 <canvas id="workChart"></canvas>
+                <h2><i class="fas fa-chart-line"></i> Monthly Earnings vs Expenses</h2>
+                <canvas id="workChart"></canvas>
             </div>
+            
+            <div class="card" id="monthly-summary-container">
+                <h2><i class="fas fa-list-alt"></i> Monthly Breakdown</h2>
+                </div>
         </div>
     </div>
     
