@@ -36,7 +36,7 @@
             </li>
             <li class="nav-item"><a href="payments.html" class="nav-link">Monthly Payments</a></li>
             <li class="nav-item dropdown">
-                <a href="#" class="nav-link">Daily Expenses ▾</a>
+                <a href="#" class="nav-link active">Daily Expenses ▾</a>
                 <div class="dropdown-content">
                     <a href="expenses.html">Add Expense</a>
                     <a href="expense-list.html">Expense List</a>
@@ -62,6 +62,12 @@
             <div class="card">
                 <div class="action-bar">
                     <a href="expenses.html" class="btn primary"><i class="fas fa-plus"></i> Add New Expense</a>
+                    <div class="filter-controls">
+                        <label for="filter-date">Filter by Day:</label>
+                        <input type="date" id="filter-date">
+                        <button id="filter-btn" class="btn btn-secondary"><i class="fas fa-filter"></i> Filter</button>
+                        <button id="clear-filter-btn" class="btn btn-secondary"><i class="fas fa-eraser"></i> Clear</button>
+                    </div>
                     <button id="download-expenses-pdf" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> Download Report</button>
                 </div>
                 <div class="table-container">
